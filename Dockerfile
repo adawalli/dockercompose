@@ -7,8 +7,7 @@ RUN set -ex \
          bash\
          curl\
     && rm -rf /var/cache/apk/*
-RUN addgroup -S compose \
-    && adduser -S compose -G compose
+ENV PATH=/root/.local/bin:"${PATH}"
 SHELL ["/bin/bash", "-c"]
 
 FROM base as builder
@@ -23,7 +22,4 @@ RUN pip3 install -U pip setuptools
 RUN pip3 install --user docker-compose
 
 FROM base as final
-COPY --from=builder /root/.local/ /home/compose/.local/
-RUN chown -R compose:compose /home/compose/.local/
-USER compose
-ENV PATH=/home/compose/.local/bin:"${PATH}"
+COPY --from=builder /root/.local/ /root/.local/
